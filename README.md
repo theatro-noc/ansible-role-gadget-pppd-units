@@ -148,3 +148,4 @@ Written by [Jacob Floyd](https://github.com/cognifloyd), employed by [Theatro](t
 [7]: https://www.mankier.com/8/udevadm
 [8]: http://elinux.org/Lsusb_(Linux)
 [9]: http://weininger.net/how-to-write-udev-rules-for-usb-devices.html
+
