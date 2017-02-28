@@ -1,0 +1,77 @@
+galaxy_info:
+  author: cognifloyd
+  description: Install gadget pppd units
+  company: Theatro Labs, Inc.
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  license: MIT
+
+  min_ansible_version: 2.2
+
+  platforms:
+  # only tested on EL and Gentoo, but it should work on te rest
+  # Please file bugs if it's not working.
+  - name: Fedora
+    versions:
+    - all
+    # systemd part of 15 and up
+  - name: GenericLinux
+    versions:
+    - all
+    - any
+  - name: ArchLinux
+    versions:
+    - all
+    - any
+  - name: Ubuntu
+    versions:
+    - vivid
+    - wily
+    - xenial
+    - yakkety
+    # systemd in vivid vervet (15.04) and up
+  - name: Debian
+    versions:
+    # 7
+    - wheezy
+    # 8
+    - jessie
+    # 9
+    - stretch
+    # unstable
+    - sid
+    # systemd in 7 (wheezy) and later, default in 8 (jessie) and later
+  - name: EL
+    versions:
+    - 7
+    # systemd in 7 and later
+  #- name: opensuse
+  #  versions:
+  #  - all
+  #  - 12.1
+  #  - 12.2
+  #  - 12.3
+  #  - 13.1
+  #  - 13.2
+  #  # systemd default in 12.2, available since 11.4/12.1
+  #- name: SLES
+  #  versions:
+  #  - 12
+  #  - 12SP1
+  #  # systemd in 12 and later
+  - name: Gentoo
+    versions:
+      - all
+
+  galaxy_tags: []
+
+allow_duplicates: no
+# The dependency is an include_role dep, so it does not support
+# running before the include_role task runs it. The include_role
+# deps must be installed via playbook-depends.yml, but not be
+# listed here (or they get run before the vars are defined in the task).
+dependencies: []
+  #- cognifloyd.bitbucket-sources

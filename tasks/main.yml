@@ -1,0 +1,105 @@
+---
+- name: Clone or update gadget-pppd-units from bitbucket.
+  include_role:
+    name: cognifloyd.bitbucket-sources
+    allow_duplicates: yes
+    private: yes
+    # with private, we can reuse the role, but we can't access registers
+    # including: bitbucket_sources_return and bitbucket_sources_key_copy
+  vars:
+    bitbucket_sources_repo_type: "{{ gadget_pppd_clone_repo_type }}"
+    bitbucket_sources_repo_account: "{{ gadget_pppd_clone_repo_account }}"
+    bitbucket_sources_repo_name: "{{ gadget_pppd_clone_repo_name }}"
+    bitbucket_sources_dest: "{{ gadget_pppd_clone_dest }}"
+    bitbucket_sources_owner: "{{ gadget_pppd_clone_owner }}"
+    bitbucket_sources_group: "{{ gadget_pppd_clone_group }}"
+    bitbucket_sources_key: "{{ gadget_pppd_clone_key }}"
+
+- name: Include distro-specific names for required package
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - default.yml
+
+- name: Ensure that required packages are in the right state
+  package:
+    name: "{{ item }}"
+    state: "{{ gadget_pppd_required_packages_state }}"
+    # update is only for Gentoo
+    update: "{{ gadget_pppd_required_packages_update | default(omit) }}"
+  with_items: "{{ gadget_pppd_required_packages }}"
+
+#- name: Check Kernel Requirements
+  # Debian has ppp-modules, but it is only for debian-installer images.
+  # Gentoo will require something extra to ensure kernel is compiled correctly.
+  # RedHat seems to have necessary modules (just works with modules galore)
+
+# We expect to be able to drop scripts in /etc/ppp/ip-up.d and .../ip-down.d
+# RedHat distros don't use ip-up.d and ip-down.d like Gentoo, Debian, and Arch
+- name: Add support for ip-up.d and ip-down.d on RedHat distros
+  include: redhat-ppp-scripts.yml
+  when: ansible_os_family == "RedHat"
+  become: yes
+  static: no
+
+- name: Ensure ip-up.d and ip-down.d exist
+  become: yes
+  file:
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    path: "{{ item }}"
+  with_items:
+    - /etc/ppp/ip-up.d
+    - /etc/ppp/ip-down.d
+
+- name: Install ppp scripts
+  become: yes
+  copy:
+    remote_src: yes
+    src: "{{ gadget_pppd_clone_dest }}/90-ppp-is-{{ item }}.sh"
+    dest: "/etc/ppp/ip-{{ item }}.d/90-ppp-is-{{ item }}.sh"
+  with_items:
+    - up
+    - down
+
+# Maybe this should go after the systemd unit installation
+# That way it can't trigger until units are installed.
+- name: Install udev rules
+  become: yes
+  template:
+    src: "etc/udev/rules.d/72-gadget-ttyacm.rules.j2"
+    dest: "/etc/udev/rules.d/72-{{ gadget_pppd_udev_rules_name }}-ttyacm.rules"
+
+- name: Install common unit EnvironmentFile
+  become: yes
+  template:
+    src: "etc/pppd-systemd-units.conf.j2"
+    dest: "/etc/pppd-systemd-units.conf"
+
+# TODO: This does not allow for modifying the IP* scheme.
+# That will have to wait till #2 is done:
+#   https://bitbucket.org/theatro-noc/gadget-pppd-units/issues/2/
+- name: Install unit files
+  include: install-unit-files.yml
+
+- name: Ensure dependent unit directory exists (gadget.target.wants)
+  become: yes
+  file:
+    path: /etc/systemd/system/gadget.target.wants
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install dependent units
+  become: yes
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/gadget.target.wants/{{ item | basename }}"
+  with_items: "{{ gadget_pppd_dependent_units }}"
+  when: gadget_pppd_dependent_units
+  notify: gadget-pppd systemd daemon-reload
+

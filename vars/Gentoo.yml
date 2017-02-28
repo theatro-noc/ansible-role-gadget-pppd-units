@@ -1,0 +1,9 @@
+gadget_pppd_required_packages_state: installed
+gadget_pppd_required_packages_update: yes
+gadget_pppd_required_packages:
+  - systemd
+  - ppp # pppd
+  - iproute2 # ip
+  - iptables
+  - procps # sysctl
+  - bash

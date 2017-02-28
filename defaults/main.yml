@@ -1,0 +1,30 @@
+---
+# Change this if you have to clone it with different credentials, or to clone a fork.
+gadget_pppd_clone_repo_type: git
+gadget_pppd_clone_repo_account: "theatro-noc"
+gadget_pppd_clone_repo_name: "gadget-pppd-units"
+
+# Where to clone the gadget-pppd-units repository (change this to get rid of .git):
+gadget_pppd_clone_dest: "/opt/theatro/theatro-noc/gadget-ppd-units.git"
+
+# Create directories with this user/group if needed.
+gadget_pppd_clone_owner: "theatro"
+gadget_pppd_clone_group: "theatro"
+
+gadget_pppd_clone_key: "~/.ssh/theatro-noc-accesskey"
+
+gadget_pppd_options_default:
+  - nodefaultroute
+  - lock
+gadget_pppd_options:
+  - noauth
+  # Other possibly interesting pppd options:
+  #- asyncmap # to require escaping various chars see manpage
+
+gadget_pppd_eth0_device: eth0
+
+# Replace ip defaults using gadget_pppd_ip
+# See vars/main.yml for what the defaults are.
+
+# list of units to copy from control master into gadget.target.wants folder
+gadget_pppd_dependent_units: []

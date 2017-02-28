@@ -1,0 +1,72 @@
+- name: Discover required bin paths
+  changed_when: false
+  become: yes
+  command: "which {{ item | basename }}"
+  with_items: "{{ gadget_pppd_default_bin_paths }}"
+  register: gadget_pppd_bin_paths_results
+
+- name: Add bin paths fact
+  set_fact:
+    gadget_pppd_bin_paths: "{{ gadget_pppd_bin_paths|default([]) + [{ 'regexp': item.item, 'replace': item.stdout }] }}"
+  when: item.item != item.stdout
+  with_items: "{{ gadget_pppd_bin_paths_results.results }}"
+
+##### BEGIN IDEMPOTENT LOCAL SECTION #####
+#
+# This section copies unit files to a temp dir on the ansible controller,
+# and then updates binary locations with distro-specific changes, as needed.
+# It does not change anything on the VM, and so it is idempotent.
+# Copying/modifying on the VM resulted in losing idempotence, so we do it this way.
+#
+# Note: systemd requires absolute paths to binaries
+
+- name: Create unit-prep temp dir (on ansible controller) for unit file updates
+  connection: local
+  changed_when: false
+  # tempfile is not available till ansible 2.3
+  #tempfile:
+  #  state: directory
+  #  suffix: gadgetpppd
+  command: mktemp -d "{{ lookup('env', 'TMPDIR') | default('/tmp', true) }}/ansible.XXXX.gadgetpppd"
+  register: gadget_pppd_units_temp
+
+- name: Copy unit files to temp dir
+  changed_when: false
+  become: yes
+  fetch:
+    flat: yes
+    src: "{{ gadget_pppd_clone_dest }}/{{ item }}"
+    #dest: "{{ gadget_pppd_units_temp.path }}/{{ item }}"
+    dest: "{{ gadget_pppd_units_temp.stdout }}/{{ item }}"
+  with_items: "{{ gadget_pppd_units }}"
+
+- name: Update bin locations in unit copies
+  connection: local
+  changed_when: false
+  replace:
+    #dest: "{{ gadget_pppd_units_temp.path }}/{{ item[0] }}"
+    dest: "{{ gadget_pppd_units_temp.stdout }}/{{ item[0] }}"
+    regexp: "{{ item[1].regexp }} "
+    replace: "{{ item[1].replace }} "
+  with_nested:
+    - "{{ gadget_pppd_units }}"
+    - "{{ gadget_pppd_bin_paths|default([]) }}"
+
+##### END IDEMPOTENT LOCAL SECTION #####
+
+- name: Install unit files to /usr/lib/systemd/system
+  become: yes
+  copy:
+    #src: "{{ gadget_pppd_units_temp.path }}/{{ item }}"
+    src: "{{ gadget_pppd_units_temp.stdout }}/{{ item }}"
+    dest: "/usr/lib/systemd/system/{{ item }}"
+  with_items: "{{ gadget_pppd_units }}"
+  notify: gadget-pppd systemd daemon-reload
+
+- name: Remove unit-prep temp directory on ansible controller
+  changed_when: false
+  connection: local
+  file:
+    state: absent
+    #path: "{{ gadget_pppd_units_temp.path }}"
+    path: "{{ gadget_pppd_units_temp.stdout }}"

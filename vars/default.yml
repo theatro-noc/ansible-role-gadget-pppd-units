@@ -1,0 +1,9 @@
+gadget_pppd_required_packages_state: latest
+
+gadget_pppd_required_packages:
+  - systemd
+  - ppp # pppd
+  - iproute # ip
+  - iptables
+  - procps # sysctl
+  - bash

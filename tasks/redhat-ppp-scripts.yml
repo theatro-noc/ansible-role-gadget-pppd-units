@@ -1,0 +1,48 @@
+# extracting individual files and renaming in one step is too complicated
+# and we risk losing idempotence. So, extract to a folder, then symlink.
+
+- name: Ensure /etc/ppp/gentoo-ppp-scripts exists on RedHat-family distros
+  file:
+    path: /etc/ppp/gentoo-ppp-scripts
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install Gentoo's ppp-scripts on RedHat-family distros
+  unarchive:
+    remote_src: yes
+    # Debian's version is more complex and calls ip-up.local itself.
+    # Arch's is similar to Gentoo's but it doesn't feel as clean.
+    # Gentoo's version is simplest: URI from ebuild =net-dialup/ppp-scripts-0
+    src: "https://dev.gentoo.org/~pinkbyte/distfiles/ppp-scripts-0.tar.xz"
+    dest: /etc/ppp/gentoo-ppp-scripts
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Check for ip-up.local and ip-down.local files on RedHat-family distros
+  stat:
+    path: "{{ item }}"
+  with_items:
+    - /etc/ppp/ip-up.local
+    - /etc/ppp/ip-down.local
+  register: gadget_pppd_scripts
+
+- name: Backup ip-up.local and ip-down.local on RedHat-family distros
+  copy:
+    remote_src: yes
+    src: "{{ item.path }}"
+    dest: "{{ item.path }}.backup-{{ ansible_date_time.date }}"
+  when: item.stat.exists and item.stat.isreg
+  with_items: "{{ gadget_pppd_scripts.results }}"
+
+- name: Symlink ip-up.local and ip-down.local on RedHat-family distros
+  file:
+    state: link
+    force: yes
+    src: "/etc/ppp/gentoo-ppp-scripts/scripts/{{ item | splitext | first }}"
+    dest: "/etc/ppp/{{ item }}"
+  with_items:
+    - ip-up.local
+    - ip-down.local
