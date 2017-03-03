@@ -23,6 +23,7 @@
     - default.yml
 
 - name: Ensure that required packages are in the right state
+  become: yes
   package:
     name: "{{ item }}"
     state: "{{ gadget_pppd_required_packages_state }}"
