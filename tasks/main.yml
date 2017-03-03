@@ -14,6 +14,8 @@
     bitbucket_sources_owner: "{{ gadget_pppd_clone_owner }}"
     bitbucket_sources_group: "{{ gadget_pppd_clone_group }}"
     bitbucket_sources_key: "{{ gadget_pppd_clone_key }}"
+  tags:
+    - deploy
 
 - name: Include distro-specific names for required package
   include_vars: "{{ item }}"
@@ -85,6 +87,8 @@
 #   https://bitbucket.org/theatro-noc/gadget-pppd-units/issues/2/
 - name: Install unit files
   include: install-unit-files.yml
+  tags:
+    - deploy
 
 - name: Ensure dependent unit directory exists (gadget.target.wants)
   become: yes
@@ -103,4 +107,6 @@
   with_items: "{{ gadget_pppd_dependent_units }}"
   when: gadget_pppd_dependent_units
   notify: gadget-pppd systemd daemon-reload
+  tags:
+    - deploy
 
