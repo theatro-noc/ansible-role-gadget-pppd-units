@@ -15,6 +15,7 @@ gadget_pppd_units:
   - pppd-is-up@.path
   - gadget-is-up-with-pppd@.service
   - gadget.target
+  - restart-failed@.service
 
 gadget_pppd_default_bin_paths:
   - /usr/sbin/pppd
