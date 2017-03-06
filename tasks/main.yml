@@ -68,6 +68,15 @@
     - up
     - down
 
+- name: Install tmpfiles.d file
+  become: yes
+  copy:
+    remote_src: yes
+    src: "{{ gadget_pppd_clone_dest }}/gadget-tmpfiles.conf"
+    dest: "/usr/lib/tmpfiles.d/"
+  notify:
+    - systemd-tmpfiles --create
+
 # Maybe this should go after the systemd unit installation
 # That way it can't trigger until units are installed.
 - name: Install udev rules
