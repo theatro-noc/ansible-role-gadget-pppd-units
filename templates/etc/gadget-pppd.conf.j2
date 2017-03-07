@@ -5,12 +5,12 @@
 #  Other possibly interesting pppd options:
 #    asyncmap (to require escaping various chars see manpage)
 
-#PPPD_SERVICE=pppd@%i.service
+#PPPD_SERVICE=gadget-pppd@%i.service
 PPPD_OPTIONS={{ (gadget_pppd_options_default + gadget_pppd_options) | join(' ') }}
 
 ETH0_DEVICE={{ gadget_pppd_eth0_device }}
-#HOST_DEVICE=pppd-host%i
-#PEER_DEVICE=pppd-peer%i
+#HOST_DEVICE=gadget-host%i
+#PEER_DEVICE=gadget-peer%i
 
 # Addressing of last 8-bit IP segment:
 #  * /30 CIDR block (4 IPs - 2 IPs (network, broadcast) = 2 IPs)
@@ -19,13 +19,13 @@ ETH0_DEVICE={{ gadget_pppd_eth0_device }}
 #  * %i must be 0-62
 #
 #    what    8-bit   CIDR  device-name
-#  -----------------------------------
-#  - host    %i*4    /31   pppd-host%i
-#  - peer    %i*4+1  /31   pppd-peer%i
+#  -------------------------------------
+#  - host    %i*4    /31   gadget-host%i
+#  - peer    %i*4+1  /31   gadget-peer%i
 #  - alias   %i*4+2  /32
 #  - extra   %i*4+3  /32
 #
-# eg: pppd@1 => host: 4; peer: 5
+# eg: gadget-pppd@1 => host: 4; peer: 5
 
 {% set ip = gadget_pppd_ip | default(gadget_pppd_ip_default) %}
 IP_BASE={{ ip.base }}

@@ -20,7 +20,7 @@ Bitbucket requires some kind of credentials to access a repository, so you'll ne
 
 _If you want me to add your access key theatro-noc repo, please email jacob[at]theatro.com, and I'll consider it._
 
-The pppd units use a variety of options that are sourced from the systemd EnvironmentFile: `/etc/pppd-systemd-units.conf` This is a templated file that uses the `gadget_pppd_options*`, `gadget_pppd_eth0_device`, and `gadget_pppd_ip*`. `gadget_pppd_options` will be appended to `gadget_pppd_options_default`, so if you want to get rid of the default options, you must override `gadget_pppd_options_default` with an empty list.
+The pppd units use a variety of options that are sourced from the systemd EnvironmentFile: `/etc/gadget-pppd.conf` This is a templated file that uses the `gadget_pppd_options*`, `gadget_pppd_eth0_device`, and `gadget_pppd_ip*`. `gadget_pppd_options` will be appended to `gadget_pppd_options_default`, so if you want to get rid of the default options, you must override `gadget_pppd_options_default` with an empty list.
 
 If you want to install any units that should depend on `gadget.target`, list those files (as a path on the ansible controller) in `gadget_pppd_dependent_units`.
 
@@ -89,7 +89,7 @@ You'll need to look up your usb gadget's `idProduct` and `idVendor`. Make sure t
   - On MacOS X, use system_profiler (see [here][5])
   - On linux, use tools like [`lsusb`][6] and [`udevadm`][7] (see [here][5], or get more details [here][8] and [here][9]).
 
-Note that `gadget_pppd_udev_rules` is a list of dictionaries where each dictionary has `name`, `idProduct`, and `idVendor`. For every device you add, a udev rule will be created that will trigger the `pppd@.service` via systemd.
+Note that `gadget_pppd_udev_rules` is a list of dictionaries where each dictionary has `name`, `idProduct`, and `idVendor`. For every device you add, a udev rule will be created that will trigger the `gadget@.service` via systemd.
 
 `gadget_pppd_ip` specifies the `IP_*` scheme used by the units to setup connections to the gadgets.
 
@@ -127,7 +127,7 @@ Please see [Requirements](#requirements) for more about how this role is used.
         idProduct: "0000"
         idVendor: "0000"
   roles:
-     - role: theatro.gadget-pppd-units
+     - role: theatro-noc.gadget-pppd-units
 ```
 
 ## License

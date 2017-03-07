@@ -2,6 +2,6 @@
 
 {% for gadget in gadget_pppd_udev_rules %}
 ## {{ gadget.name }}
-SUBSYSTEM=="tty" ATTRS{idProduct}=="{{ gadget.idProduct }}" ATTRS{idVendor}=="{{ gadget.idVendor }}" TAG+="systemd" ENV{SYSTEMD_WANTS}="pppd@%n.service"
+SUBSYSTEM=="tty" ATTRS{idProduct}=="{{ gadget.idProduct }}" ATTRS{idVendor}=="{{ gadget.idVendor }}" TAG+="systemd" ENV{SYSTEMD_WANTS}="gadget@%n.service"
 
 {% endfor %}

@@ -7,15 +7,13 @@ gadget_pppd_ip_default:
   ppp: "10.222.222.223"
 
 gadget_pppd_units:
-  - pppd@.service
-  - pppd-veth@.service
-  - pppd-vethpeer@.service
-  - pppd-veth-routes@.service
-  - pppd-vethpeer-routes@.service
-  - pppd-is-up@.path
-  - gadget-is-up-with-pppd@.service
+  - gadget@.service
+  - gadget-pppd@.service
+  - gadget-veth@.service
+  - gadget-vethpeer@.service
+  - gadget-veth-routes@.service
+  - gadget-vethpeer-routes@.service
   - gadget.target
-  - restart-failed@.service
 
 gadget_pppd_default_bin_paths:
   - /usr/sbin/pppd

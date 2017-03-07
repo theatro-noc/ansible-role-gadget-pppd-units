@@ -88,8 +88,8 @@
 - name: Install common unit EnvironmentFile
   become: yes
   template:
-    src: "etc/pppd-systemd-units.conf.j2"
-    dest: "/etc/pppd-systemd-units.conf"
+    src: "etc/gadget-pppd.conf.j2"
+    dest: "/etc/gadget-pppd.conf"
 
 # TODO: This does not allow for modifying the IP* scheme.
 # That will have to wait till #2 is done:
