@@ -17,6 +17,10 @@
   tags:
     - deploy
 
+# TODO: Install custom ppp rpm on Redhat
+# Add patch to gentoo /etc/portage/patches
+# Don't know how to deal with other distros, I'll leave them out for now.
+
 - name: Include distro-specific names for required package
   include_vars: "{{ item }}"
   with_first_found:
@@ -37,36 +41,6 @@
   # Debian has ppp-modules, but it is only for debian-installer images.
   # Gentoo will require something extra to ensure kernel is compiled correctly.
   # RedHat seems to have necessary modules (just works with modules galore)
-
-# We expect to be able to drop scripts in /etc/ppp/ip-up.d and .../ip-down.d
-# RedHat distros don't use ip-up.d and ip-down.d like Gentoo, Debian, and Arch
-- name: Add support for ip-up.d and ip-down.d on RedHat distros
-  include: redhat-ppp-scripts.yml
-  when: ansible_os_family == "RedHat"
-  become: yes
-  static: no
-
-- name: Ensure ip-up.d and ip-down.d exist
-  become: yes
-  file:
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-    path: "{{ item }}"
-  with_items:
-    - /etc/ppp/ip-up.d
-    - /etc/ppp/ip-down.d
-
-- name: Install ppp scripts
-  become: yes
-  copy:
-    remote_src: yes
-    src: "{{ gadget_pppd_clone_dest }}/90-ppp-is-{{ item }}.sh"
-    dest: "/etc/ppp/ip-{{ item }}.d/90-ppp-is-{{ item }}.sh"
-  with_items:
-    - up
-    - down
 
 - name: Install tmpfiles.d file
   become: yes
