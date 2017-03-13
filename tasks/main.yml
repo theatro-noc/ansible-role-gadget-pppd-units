@@ -17,25 +17,23 @@
   tags:
     - deploy
 
-# TODO: Install custom ppp rpm on Redhat
-# Add patch to gentoo /etc/portage/patches
-# Don't know how to deal with other distros, I'll leave them out for now.
-
-- name: Include distro-specific names for required package
+- name: Include distro-specific vars (like package names)
   include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution }}.yml"
     - "{{ ansible_os_family }}.yml"
     - default.yml
 
-- name: Ensure that required packages are in the right state
-  become: yes
-  package:
-    name: "{{ item }}"
-    state: "{{ gadget_pppd_required_packages_state }}"
-    # update is only for Gentoo
-    update: "{{ gadget_pppd_required_packages_update | default(omit) }}"
-  with_items: "{{ gadget_pppd_required_packages }}"
+- name: Include distro-specific package install tasks
+  # RedHat-family installs custom rpms
+  # Gentoo merely adds a patch in /etc/portage/patches
+  # Ignoring other distros for now.
+  include: "{{ item }}"
+  with_first_found:
+    # Be sure that any distro-packages.yml includes default-packages.yml
+    - "{{ ansible_distribution }}-packages.yml"
+    - "{{ ansible_os_family }}-packages.yml"
+    - default-packages.yml
 
 #- name: Check Kernel Requirements
   # Debian has ppp-modules, but it is only for debian-installer images.

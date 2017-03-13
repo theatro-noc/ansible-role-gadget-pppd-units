@@ -7,3 +7,5 @@ gadget_pppd_required_packages:
   - iptables
   - procps # sysctl
   - bash
+
+gadget_pppd_ppp_systemd_patch: 0001-Use-systemds-sd_notify-with-option-up_sdnotify-enabled.patch

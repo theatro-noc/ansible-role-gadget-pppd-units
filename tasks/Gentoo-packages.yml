@@ -1,0 +1,23 @@
+
+- name: Add up_sdnotify patch to net-dialup/ppp
+  become: yes
+  file:
+    path: /etc/portage/patches/net-dialup/ppp
+    state: directory
+
+- name: Add up_sdnotify patch to net-dialup/ppp
+  become: yes
+  copy:
+    src: "{{ gadget_pppd_ppp_systemd_patch }}"
+    dest: /etc/portage/patches/net-dialup/ppp/
+  register: gadget_pppd_ppp_systemd_patch_result
+
+- name: Build ppp with the patch if the patch was updated
+  become: yes
+  when: gadget_pppd_ppp_systemd_patch_result.changed
+  # the portage module can't handle a forced rebuild
+  # if the package is already the latest version. So,
+  # just run it.
+  command: emerge --quiet net-dialup/ppp
+
+- include: default-packges.yml

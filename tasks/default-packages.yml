@@ -1,0 +1,21 @@
+
+- name: Ensure that required packages are in the right state
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: "{{ gadget_pppd_required_packages_state }}"
+    # update is only for Gentoo
+    update: "{{ gadget_pppd_required_packages_update | default(omit) }}"
+  with_items: "{{ gadget_pppd_required_packages }}"
+
+- name: Discover location of pppd binary
+  changed_when: false
+  become: yes
+  command: "which pppd"
+  register: gadget_pppd_bin_result
+
+- name: Ensure that pppd was compiled with the up_sdnotify option
+  find:
+    file_type: file
+    path: "{{ gadget_pppd_bin_result.stdout }}"
+    contains: up_sdnotify

@@ -2,8 +2,35 @@ gadget_pppd_required_packages_state: latest
 
 gadget_pppd_required_packages:
   - systemd
-  - ppp # pppd
+  # ppp must be installed with a custom rpm, not from std rpm repos
+  #- ppp # pppd
   - iproute # ip
   - iptables
   - procps-ng # sysctl
   - bash
+
+gadget_pppd_custom_rpm_dir_src: RPMS
+gadget_pppd_custom_rpm_dir: /var/cache/theatro/rpms/
+
+gadget_pppd_custom_rpms:
+  - ppp-2.4.7-9systemd.el7_3_theatro.x86_64.rpm
+  #- ppp-devel-2.4.7-9systemd.el7_3_theatro.x86_64.rpm
+  #- ppp-debuginfo-2.4.7-9systemd.el7_3_theatro.x86_64.rpm
+  #- ppp-2.4.7-9systemd.el7_3_theatro.x86_64.src.rpm
+
+  # NetworkManager had to be recompiled to link against the newer version of ppp
+  - NetworkManager-1.4.0-17.el7_3_theatro.x86_64.rpm
+  # Any other installed NetworkManager-* package
+  - NetworkManager-libnm-1.4.0-17.el7_3_theatro.x86_64.rpm
+  - NetworkManager-team-1.4.0-17.el7_3_theatro.x86_64.rpm
+  - NetworkManager-tui-1.4.0-17.el7_3_theatro.x86_64.rpm
+  - NetworkManager-wifi-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-dispatcher-routing-rules-1.4.0-17.el7_3_theatro.noarch.rpm
+  #- NetworkManager-adsl-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-bluetooth-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-config-server-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-glib-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-wwan-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-glib-devel-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-libnm-devel-1.4.0-17.el7_3_theatro.x86_64.rpm
+  #- NetworkManager-debuginfo-1.4.0-17.el7_3_theatro.x86_64.rpm
