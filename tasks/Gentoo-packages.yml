@@ -1,5 +1,5 @@
 
-- name: Add up_sdnotify patch to net-dialup/ppp
+- name: Add net-dialup/ppp patches directory
   become: yes
   file:
     path: /etc/portage/patches/net-dialup/ppp
@@ -20,4 +20,4 @@
   # just run it.
   command: emerge --quiet net-dialup/ppp
 
-- include: default-packges.yml
+- include: default-packages.yml
