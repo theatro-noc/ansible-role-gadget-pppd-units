@@ -28,12 +28,14 @@
   # RedHat-family installs custom rpms
   # Gentoo merely adds a patch in /etc/portage/patches
   # Ignoring other distros for now.
-  include: "{{ item }}"
+  include: "{{ packages_include }}"
   with_first_found:
     # Be sure that any distro-packages.yml includes default-packages.yml
     - "{{ ansible_distribution }}-packages.yml"
     - "{{ ansible_os_family }}-packages.yml"
     - default-packages.yml
+  loop_control:
+    loop_var: packages_include
 
 #- name: Check Kernel Requirements
   # Debian has ppp-modules, but it is only for debian-installer images.
