@@ -57,7 +57,7 @@ gadget_pppd_ip_default:
   mask: 31
   alias_mask: 32
   gadget: "10.222.222.223"
-  ppp: "10.222.222.223"
+  ppp: "10.222.222.222"
 
 gadget_pppd_units:
   - <a list of units in the bitbucket repo>
