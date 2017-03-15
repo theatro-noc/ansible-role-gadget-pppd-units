@@ -10,7 +10,7 @@ gadget_pppd_required_packages:
   - bash
 
 gadget_pppd_custom_rpm_dir_src: RPMS
-gadget_pppd_custom_rpm_dir: /var/cache/theatro/rpms/
+gadget_pppd_custom_rpm_dir: /var/cache/theatro/rpms
 
 gadget_pppd_custom_rpms:
   - ppp-2.4.7-9systemd.el7_3_theatro.x86_64.rpm

@@ -10,6 +10,8 @@
     gadget_pppd_bin_paths: "{{ gadget_pppd_bin_paths|default([]) + [{ 'regexp': item.item, 'replace': item.stdout }] }}"
   when: item.item != item.stdout
   with_items: "{{ gadget_pppd_bin_paths_results.results }}"
+  loop_control:
+    label: "{{ item.stdout }}"
 
 ##### BEGIN IDEMPOTENT LOCAL SECTION #####
 #
@@ -51,6 +53,8 @@
   with_nested:
     - "{{ gadget_pppd_units }}"
     - "{{ gadget_pppd_bin_paths|default([]) }}"
+  loop_control:
+    label: "{{ item[0] }}: {{ item[1].regexp }} => {{ item[1].replace }}"
 
 ##### END IDEMPOTENT LOCAL SECTION #####
 
