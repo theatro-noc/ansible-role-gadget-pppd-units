@@ -64,6 +64,8 @@
   template:
     src: "etc/gadget-pppd.conf.j2"
     dest: "/etc/gadget-pppd.conf"
+  tags:
+    - deploy
 
 # TODO: This does not allow for modifying the IP* scheme.
 # That will have to wait till #2 is done:
