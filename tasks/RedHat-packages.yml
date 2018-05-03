@@ -1,9 +1,10 @@
-
+---
 - name: Add custom rpm dir
   become: yes
   file:
     path: "{{ gadget_pppd_custom_rpm_dir }}"
     state: directory
+  when: gadget_pppd_custom_rpm_dir is not none
 
 - name: Copy custom RPMs
   become: yes
@@ -11,7 +12,7 @@
     src: "{{ gadget_pppd_custom_rpm_dir_src }}/{{ item }}"
     dest: "{{ gadget_pppd_custom_rpm_dir }}"
   with_items: "{{ gadget_pppd_custom_rpms }}"
-  when: gadget_pppd_custom_rpm_dir is defined
+  when: gadget_pppd_custom_rpm_dir is not none
 
 # TODO: Need a way to select required NetworkManager rpms on the fly
 
@@ -21,5 +22,6 @@
     name: "{{ gadget_pppd_custom_rpm_dir | default(gadget_pppd_custom_rpm_uri) }}/{{ item }}"
     state: present
   with_items: "{{ gadget_pppd_custom_rpms }}"
+  when: gadget_pppd_custom_rpm_dir is not none
 
 - include: default-packages.yml
