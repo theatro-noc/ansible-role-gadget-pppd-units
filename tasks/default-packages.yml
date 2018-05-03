@@ -2,11 +2,10 @@
 - name: Ensure that required packages are in the right state
   become: yes
   package:
-    name: "{{ item }}"
+    name: "{{ gadget_pppd_required_packages }}"
     state: "{{ gadget_pppd_required_packages_state }}"
     # update is only for Gentoo
     update: "{{ gadget_pppd_required_packages_update | default(omit) }}"
-  with_items: "{{ gadget_pppd_required_packages }}"
 
 - name: Discover location of pppd binary
   changed_when: false
